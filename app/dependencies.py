@@ -1,6 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.adapters.outgoing.db.db_adapter import MongoDBAdapter
-#from app.adapters.outgoing.jwt.auth_adapter import JWTAdapter
 from app.config import Config
 
 

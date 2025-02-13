@@ -1,11 +1,17 @@
 from fastapi import APIRouter, Depends, Body, HTTPException, status
 from fastapi.responses import Response
+
+from app.adapters.outgoing.jwt.auth_adapter import get_current_user
 from app.dependencies import get_db_adapter
 from app.core.use_cases import PropertyUseCases
 from app.core.models import PropertyModel, PropertyCollection, UpdatePropertyModel
+#from app.adapters.outgoing.jwt.auth_adapter import JWTAdapter
 
 # Router für Property-Operationen erstellen
-router = APIRouter()
+PROTECTED = [Depends(get_current_user)]
+router = APIRouter(
+    dependencies=PROTECTED
+)
 
 @router.post(
     "/properties/",
