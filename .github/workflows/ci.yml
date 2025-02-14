@@ -50,4 +50,4 @@ jobs:
           context: .
           platforms: linux/amd64, linux/arm64
           push: true
-          tags: ghcr.io/cndss25/property_service:latest
+          tags: ghcr.io/cndss25/property-service:latest
