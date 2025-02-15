@@ -1,13 +1,11 @@
 from fastapi import APIRouter, Depends, Body, HTTPException, status
 from fastapi.responses import Response
-
 from app.adapters.outgoing.jwt.auth_adapter import get_current_user
 from app.dependencies import get_db_adapter
 from app.core.use_cases import PropertyUseCases
 from app.core.models import PropertyModel, PropertyCollection, UpdatePropertyModel
-#from app.adapters.outgoing.jwt.auth_adapter import JWTAdapter
 
-# Router für Property-Operationen erstellen
+
 PROTECTED = [Depends(get_current_user)]
 router = APIRouter(
     dependencies=PROTECTED
@@ -38,7 +36,7 @@ async def create_property(property: PropertyModel = Body(...), db_adapter=Depend
 )
 async def list_properties(db_adapter=Depends(get_db_adapter)):
     """
-        List all of the property data in the database.
+        List all the property data in the database.
 
         The response is unpaginated and limited to 1000 results.
     """
@@ -100,10 +98,3 @@ async def delete_property(id: str, db_adapter=Depends(get_db_adapter)):
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     raise HTTPException(status_code=404, detail=f"Property {id} not found")
-
-@router.get("/")
-async def root():
-    """
-    Test-Endpunkt, um sicherzustellen, dass die API läuft.
-    """
-    return {"message": "Property Service is running"}

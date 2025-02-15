@@ -1,26 +1,8 @@
 import jwt
-from fastapi import FastAPI, HTTPException, Depends, status, Body
-from fastapi.security import OAuth2PasswordBearer, HTTPAuthorizationCredentials, HTTPBearer
+from fastapi import HTTPException, Depends, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 security = HTTPBearer()
-
-# class JWTAdapter:
-#     """
-#     Adapter für das JWT-Handling.
-#     """
-#
-#     def __init__(self, secret_key: str, algorithm: str, expire_minutes: int):
-#         """
-#         Konstruktor für den JWT-Adapter.
-#
-#         :param secret_key: Der geheime Schlüssel für die JWT-Generierung
-#         :param algorithm: Der Algorithmus für die JWT-Generierung
-#         :param expire_minutes: Die Gültigkeitsdauer des Tokens in Minuten
-#         """
-#         self.secret_key = secret_key
-#         self.algorithm = algorithm
-#         self.expire_minutes = expire_minutes
-
 
 def decode_token(token: str) -> dict:
     """
@@ -40,16 +22,14 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     token = credentials.credentials
 
     payload = decode_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials"
+        )
     username = payload.get("sub")
     if username is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token payload is missing 'sub'"
+            detail="Invalid authentication credentials"
         )
-    # user = fake_users_db.get(username)
-    # if user is None:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail="User not found"
-    #     )
-
