@@ -1,0 +1,5 @@
+FastAPI:
+- uvicorn app.main:app --reload
+
+Docker:
+docker build -t property_service:latest .
