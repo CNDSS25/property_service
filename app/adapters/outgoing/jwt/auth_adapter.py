@@ -28,8 +28,30 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             detail="Invalid authentication credentials"
         )
     username = payload.get("sub")
+    user = payload.get("id")
     if username is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials"
         )
+
+def get_current_user_from_Token(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """
+    Decode the token and retrieve the current user.
+    Also verifies that the token includes the required claims.
+    """
+    token = credentials.credentials
+    payload = decode_token(token)
+    if payload is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No token found"
+        )
+    user = payload.get("id")
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="No user found"
+        )
+
+    return user
