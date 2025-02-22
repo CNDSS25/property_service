@@ -8,6 +8,10 @@ class PropertyUseCases:
     async def list_properties(self):
         return await self.db_adapter.list_properties()
 
+    #TODO: list_properties here or on DB-side?
+    async def list_properties_by_owner(self, owner):
+        return await self.db_adapter.list_properties_by_owner(owner)
+
     async def show_property(self, id):
         return await self.db_adapter.show_property(id)
 

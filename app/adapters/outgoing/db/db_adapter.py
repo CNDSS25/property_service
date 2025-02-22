@@ -20,6 +20,9 @@ class MongoDBAdapter:
     async def list_properties(self):
         return PropertyCollection(properties=await self.collection.find().to_list(1000))
 
+    async def list_properties_by_owner(self, owner):
+        properties = await self.collection.find({"owner": ObjectId(owner)}).to_list(1000)
+        return PropertyCollection(properties=properties)
 
     async def show_property(self, id):
         return await self.collection.find_one({"_id": ObjectId(id)})

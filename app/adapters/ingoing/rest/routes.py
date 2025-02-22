@@ -8,7 +8,7 @@ from app.core.models import PropertyModel, PropertyCollection, UpdatePropertyMod
 
 PROTECTED = [Depends(get_current_user)]
 router = APIRouter(
-    dependencies=PROTECTED
+    # dependencies=PROTECTED
 )
 
 @router.post(
@@ -42,6 +42,28 @@ async def list_properties(db_adapter=Depends(get_db_adapter)):
     """
     property_use_cases = PropertyUseCases(db_adapter)
     return await property_use_cases.list_properties()
+
+
+@router.get(
+    "/properties/{owner}",
+    response_description="List all properties from one owner",
+    response_model=PropertyCollection,
+    response_model_by_alias=False,
+)
+async def show_property_by_owner(
+    owner: str,
+    db_adapter=Depends(get_db_adapter)
+):
+    """
+        Retrieve all properties associated with a specific `owner`.
+    """
+    property_use_cases = PropertyUseCases(db_adapter)
+    properties = await property_use_cases.list_properties_by_owner(owner)
+
+    if not properties:
+        raise HTTPException(status_code=404, detail="No properties found for this owner")
+
+    return properties
 
 
 @router.get(

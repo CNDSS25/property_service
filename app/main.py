@@ -26,9 +26,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(router, tags=["properties"])
+app.include_router(router, tags=["Properties"])
 
-@app.get("/")
+@app.get("/",
+    tags=["Healthcheck"]
+)
 async def root():
     """
     Test-Endpunkt, um sicherzustellen, dass die API läuft.
@@ -37,7 +39,7 @@ async def root():
 
 
 @app.get("/health",
-    tags=["healthcheck"],
+    tags=["Healthcheck"],
     summary="Perform a Health Check",
     response_description="Return HTTP Status Code 200 (OK)",
     status_code=status.HTTP_200_OK
@@ -45,5 +47,5 @@ async def root():
 async def health():
     return {"status": "healthy"}
 
-# if __name__ == "__main__":
-#     uvicorn.run(app, host="0.0.0.0", port=8001)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8001)
