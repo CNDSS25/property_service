@@ -66,7 +66,13 @@ class PropertyModel(BaseModel):
                 "bathrooms": 3,
                 "property_type": "Villa",
                 "availability_status": "Available",
-                "rental_income": ""
+                "rental_income": {
+                    "date": "2024-02-01",
+                    "amount": 1200.0,
+                    "tenant": "John Doe",
+                    "payment_method": "Bank Transfer",
+                    "status": "Paid"
+                }
             }
         },
     )
@@ -100,7 +106,14 @@ class UpdatePropertyModel(BaseModel):
                 "size_sqm": 260.0,
                 "bedrooms": 5,
                 "availability_status": "Available",
-                "rental_income": ""
+                "rental_income":
+                {
+                    "date": "2024-02-01",
+                    "amount": 1200.0,
+                    "tenant": "John Doe",
+                    "payment_method": "Bank Transfer",
+                    "status": "Paid"
+                }
             }
         },
     )

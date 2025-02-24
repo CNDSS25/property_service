@@ -24,6 +24,21 @@ class MongoDBAdapter:
         properties = await self.collection.find({"owner": ObjectId(owner)}).to_list(1000)
         return PropertyCollection(properties=properties)
 
+    async def list_rental_payments(self, owner, isPaid):
+        if not isPaid:
+            properties = await self.collection.find({
+                "owner": ObjectId(owner),
+                "availability_status": "rented",
+                "rental_income.status": "Pending"}
+            ).to_list(1000)
+        if isPaid:
+            properties = await self.collection.find({
+                "owner": ObjectId(owner),
+                "availability_status": "rented",
+                "rental_income.status": "Paid"}
+            ).to_list(1000)
+        return PropertyCollection(properties=properties)
+
     async def show_property(self, id):
         return await self.collection.find_one({"_id": ObjectId(id)})
 
