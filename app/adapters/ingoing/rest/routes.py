@@ -128,7 +128,7 @@ async def delete_property(id: str, db_adapter=Depends(get_db_adapter)):
 
     raise HTTPException(status_code=404, detail=f"Property {id} not found")
 
-
+# TODO: split in new router -> rentalPayments CRUD
 @router.get(
     "/properties/rental-income-summary/",
     response_description="List all properties from one owner",
