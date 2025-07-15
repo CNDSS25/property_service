@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Body, HTTPException, status
 from fastapi.responses import Response
 from fastapi.security import HTTPAuthorizationCredentials
@@ -136,7 +138,7 @@ async def delete_property(id: str, db_adapter=Depends(get_db_adapter)):
     response_model_by_alias=False,
 )
 async def get_all_rental_income_summary(
-        isPaid: bool,
+        isPaid: Optional[bool],
         owner: HTTPAuthorizationCredentials = Depends(get_current_user_from_Token),
         db_adapter=Depends(get_db_adapter)
 ):

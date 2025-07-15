@@ -67,9 +67,6 @@ class MongoDBAdapter:
 
 
     async def add_rental_income(self, id, income):
-        """
-           Fügt einer Immobilie eine neue Mietzahlung hinzu.
-        """
         income_data = {
             k: v for k, v in income.model_dump(by_alias=True).items() if v is not None
         }
