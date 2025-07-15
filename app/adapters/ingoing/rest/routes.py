@@ -8,6 +8,7 @@ from app.adapters.outgoing.jwt.auth_adapter import get_current_user, decode_toke
 from app.dependencies import get_db_adapter
 from app.core.use_cases import PropertyUseCases
 from app.core.models import PropertyModel, PropertyCollection, UpdatePropertyModel, RentalIncome
+from app.adapters.outgoing.rabbitmq.rabbitmq_sender import publish_event
 
 PROTECTED = [Depends(get_current_user)]
 router = APIRouter(
@@ -67,7 +68,7 @@ async def show_property_by_owner(
     properties = await property_use_cases.list_properties_by_owner(owner)
     if not properties:
         raise HTTPException(status_code=404, detail="No properties found for this owner")
-
+    publish_event('properties_listed', {"message": "Testnachricht"})
     return properties
 
 
@@ -169,6 +170,7 @@ async def add_rental_income(
     property_use_cases = PropertyUseCases(db_adapter)
     update_result = await property_use_cases.add_rental_income(id, income)
     if update_result is not None:
+        #publish_event('rental_income', update_result)
         return update_result
     else:
         raise HTTPException(status_code=404, detail=f"Property {id} not found")
