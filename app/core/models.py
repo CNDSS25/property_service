@@ -5,20 +5,18 @@ from pydantic import ConfigDict, BaseModel, Field
 from typing import Optional, List
 from bson import ObjectId
 
-# Represents an ObjectId field in the database.
-# It will be represented as a `str` on the model so that it can be serialized to JSON.
 PyObjectId = Annotated[str, BeforeValidator(str)]
 
 class RentalIncome(BaseModel):
     """
         Container for a rental income record.
     """
-
+    id: Optional[PyObjectId] = Field(alias="id", default=None)
     date: date
     amount: float = Field(..., gt=0)
     tenant: str = Field(...)
     payment_method: str = Field(...)
-    status: str = Field(...) # Paid, Pending, Overdue
+    status: str = Field(...)
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -45,12 +43,15 @@ class PropertyModel(BaseModel):
     description: str = Field(...)
     price: float = Field(..., gt=0)
     location: str = Field(...)
-    size_sqm: float = Field(..., gt=0)  # Size in square meters
+    size_sqm: float = Field(..., gt=0)
     bedrooms: int = Field(..., ge=0)
     bathrooms: int = Field(..., ge=0)
-    property_type: str = Field(...)  # e.g., "Apartment", "House", "Commercial"
-    availability_status: str = Field(...)  # e.g., "Available", "Sold", "Rented"
+    property_type: str = Field(...)
+    availability_status: str = Field(...)
     rental_income: List[RentalIncome]
+    rental_status: str = Field(...)
+    next_due_date: date
+    overdue_days: int = Field(..., ge=0)
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -66,7 +67,16 @@ class PropertyModel(BaseModel):
                 "bathrooms": 3,
                 "property_type": "Villa",
                 "availability_status": "Available",
-                "rental_income": ""
+                "rental_status": "payment_pending",
+                "next_due_date": "2025-03-10",
+                "overdue_days": 0,
+                "rental_income": {
+                    "date": "2024-02-01",
+                    "amount": 1200.0,
+                    "tenant": "John Doe",
+                    "payment_method": "Bank Transfer",
+                    "status": "Paid"
+                }
             }
         },
     )
@@ -87,6 +97,9 @@ class UpdatePropertyModel(BaseModel):
     bathrooms: Optional[int] = None
     property_type: Optional[str] = None
     availability_status: Optional[str] = None
+    rental_status: str = Field(...)
+    next_due_date: date
+    overdue_days: int = Field(..., ge=0)
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
@@ -100,7 +113,17 @@ class UpdatePropertyModel(BaseModel):
                 "size_sqm": 260.0,
                 "bedrooms": 5,
                 "availability_status": "Available",
-                "rental_income": ""
+                "rental_status": "payment_pending",
+                "next_due_date": "2024-02-01",
+                "overdue_days": 0,
+                "rental_income":
+                {
+                    "date": "2024-02-01",
+                    "amount": 1200.0,
+                    "tenant": "John Doe",
+                    "payment_method": "Bank Transfer",
+                    "status": "Paid"
+                }
             }
         },
     )

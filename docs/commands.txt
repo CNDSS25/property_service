@@ -3,3 +3,6 @@ FastAPI:
 
 Docker:
 docker build -t property_service:latest .
+
+MongoDB-Queries:
+{'owner':ObjectId('67b9b0460001ad52d86a5e38'),'availability_status':'rented','rental_income.status':'Pending'}

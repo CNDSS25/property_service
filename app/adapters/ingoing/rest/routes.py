@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Body, HTTPException, status
 from fastapi.responses import Response
 from fastapi.security import HTTPAuthorizationCredentials
@@ -5,8 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials
 from app.adapters.outgoing.jwt.auth_adapter import get_current_user, decode_token, get_current_user_from_Token
 from app.dependencies import get_db_adapter
 from app.core.use_cases import PropertyUseCases
-from app.core.models import PropertyModel, PropertyCollection, UpdatePropertyModel
-
+from app.core.models import PropertyModel, PropertyCollection, UpdatePropertyModel, RentalIncome
 
 PROTECTED = [Depends(get_current_user)]
 router = APIRouter(
@@ -20,7 +21,10 @@ router = APIRouter(
     status_code=status.HTTP_201_CREATED,
     response_model_by_alias=False,
 )
-async def create_property(property: PropertyModel = Body(...), db_adapter=Depends(get_db_adapter)):
+async def create_property(
+        property: PropertyModel = Body(...),
+        db_adapter=Depends(get_db_adapter)
+):
     """
         Insert a new property record.
 
@@ -52,7 +56,10 @@ async def list_properties(db_adapter=Depends(get_db_adapter)):
     response_model=PropertyCollection,
     response_model_by_alias=False,
 )
-async def show_property_by_owner(owner: HTTPAuthorizationCredentials = Depends(get_current_user_from_Token), db_adapter=Depends(get_db_adapter)):
+async def show_property_by_owner(
+        owner: HTTPAuthorizationCredentials = Depends(get_current_user_from_Token),
+        db_adapter=Depends(get_db_adapter)
+):
     """
         Retrieve all properties associated with a specific `owner`.
     """
@@ -89,7 +96,11 @@ async def show_property(id: str, db_adapter=Depends(get_db_adapter)):
     response_model=PropertyModel,
     response_model_by_alias=False,
 )
-async def update_property(id: str, property: UpdatePropertyModel = Body(...), db_adapter=Depends(get_db_adapter)):
+async def update_property(
+        id: str,
+        property: UpdatePropertyModel = Body(...),
+        db_adapter=Depends(get_db_adapter)
+):
     """
     Update individual fields of an existing property record.
 
@@ -118,3 +129,46 @@ async def delete_property(id: str, db_adapter=Depends(get_db_adapter)):
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     raise HTTPException(status_code=404, detail=f"Property {id} not found")
+
+# TODO: split in new router -> rentalPayments CRUD
+@router.get(
+    "/properties/rental-income-summary/",
+    response_description="Get an income-summary",
+    response_model=PropertyCollection,
+    response_model_by_alias=False,
+)
+async def get_all_rental_income_summary(
+        isPaid: Optional[bool],
+        owner: HTTPAuthorizationCredentials = Depends(get_current_user_from_Token),
+        db_adapter=Depends(get_db_adapter)
+):
+    """
+        Get rental income summary. Depends on `isPaid`.
+    """
+    property_use_cases = PropertyUseCases(db_adapter)
+    rental_payments = await property_use_cases.list_rental_payments(owner, isPaid)
+    if not rental_payments:
+        raise HTTPException(status_code=404, detail="No rental payments found for this owner")
+
+    return rental_payments
+
+@router.put(
+    "/properties/rental-income/{id}",
+    response_description="Add rental income",
+    response_model=PropertyModel,
+    response_model_by_alias=False,
+)
+async def add_rental_income(
+        id: str,
+        income: RentalIncome = Body(...),
+        db_adapter=Depends(get_db_adapter)
+):
+    """
+        add rental income.
+    """
+    property_use_cases = PropertyUseCases(db_adapter)
+    update_result = await property_use_cases.add_rental_income(id, income)
+    if update_result is not None:
+        return update_result
+    else:
+        raise HTTPException(status_code=404, detail=f"Property {id} not found")
