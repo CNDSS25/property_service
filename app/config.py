@@ -15,10 +15,11 @@ class Config:
     RABBITMQ_EXCHANGE = os.getenv("RABBITMQ_EXCHANGE", default="FinSight")
 
     routing_keys = os.getenv("RABBITMQ_ROUTING_KEYS_COLLECTION",
-                       default="properties_listed,rental_income")
+                       default="properties_listed,rental_income,test")
     routing_keys_list = routing_keys.split(',')
 
     RABBITMQ_ROUTING_KEYS = {
         'properties_listed': routing_keys_list[0],
         'rental_income': routing_keys_list[1],
+        'test': routing_keys_list[2],
     }

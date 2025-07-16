@@ -68,7 +68,7 @@ async def show_property_by_owner(
     properties = await property_use_cases.list_properties_by_owner(owner)
     if not properties:
         raise HTTPException(status_code=404, detail="No properties found for this owner")
-    publish_event('properties_listed', {"message": "Testnachricht"})
+    publish_event('test', {"message": "Testnachricht"})
     return properties
 
 
