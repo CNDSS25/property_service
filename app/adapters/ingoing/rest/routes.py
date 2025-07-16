@@ -170,7 +170,7 @@ async def add_rental_income(
     property_use_cases = PropertyUseCases(db_adapter)
     update_result = await property_use_cases.add_rental_income(id, income)
     if update_result is not None:
-        #publish_event('rental_income', update_result)
+        publish_event('rental_income', {"message":"Es ist Miete eingegangen"})
         return update_result
     else:
         raise HTTPException(status_code=404, detail=f"Property {id} not found")
