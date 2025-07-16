@@ -13,7 +13,7 @@ class RabbitMQConnection:
             host=host,
             port=port,
             credentials=pika.PlainCredentials(user, password),
-            heartbeat=20,
+            heartbeat=3600,
             blocked_connection_timeout=30,
         )
         self._exchange = exchange
