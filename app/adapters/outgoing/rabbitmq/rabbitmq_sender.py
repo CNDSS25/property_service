@@ -1,6 +1,6 @@
 import pika, json
 from app.config import Config
-from rabbitmq_config import rabbitmq_connection
+from app.adapters.outgoing.rabbitmq.rabbitmq_config import rabbitmq_connection
 
 def publish_event(event: str, payload: dict, connection=None):
     if connection is None:
