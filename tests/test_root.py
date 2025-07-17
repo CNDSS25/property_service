@@ -9,4 +9,4 @@ def test_root_endpoint():
     """
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json() == {"message": "Product Service is running"}
+    assert response.json() == {"message": "Property Service is running"}
